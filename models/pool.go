@@ -1,6 +1,7 @@
 package models
 
 
+
 // The main pool containing all domains currently active
 var DomainPool = make([]*Domain, 0)
 
@@ -14,6 +15,7 @@ func AddDomain(d *Domain)  {
 // If the DomainPool is empty returns -1
 func FindDomain(d string) (int, *Domain) {
 	for i, v := range DomainPool {
+		//fmt.Println("host is: ", d)
 		if v.Name == d {
 			return i, v
 		}

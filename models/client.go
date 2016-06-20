@@ -50,10 +50,10 @@ func NewClient(ws *websocket.Conn, domain string) *Client {
 				ticker.Stop()
 				return
 			default:
-				fmt.Println(time.Now(), " pinging client: ", client.Id)
+				//fmt.Println(time.Now(), " pinging client: ", client.Id)
 				err := client.Connection.WriteControl(websocket.PingMessage, []byte{}, time.Now().Add(writeWait))
 				if err != nil {
-					fmt.Println(time.Now(), " client disconect, will remove from domain pool ",  client.Id)
+					//fmt.Println(time.Now(), " client disconect, will remove from domain pool ",  client.Id)
 					RemoveClient(client)
 					ticker.Stop()
 					fmt.Println("Exiting routine")

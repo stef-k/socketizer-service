@@ -8,10 +8,12 @@ import (
 	"encoding/json"
 )
 
-type Req struct {
-	Host string `json:"host"`
-	SecretKey string `json:"secretKey"`
-	PostUrl string `json:"postUrl"`
+type Request struct {
+	Host         string `json:"host"`
+	SecretKey    string `json:"secretKey"`
+	PostUrl      string `json:"postUrl"`
+	PostId       string `json:"postId"`
+	PageForPosts string `json:"pageForPosts`
 }
 
 // BroadcastPool broadcasts a message to the DomainPool
@@ -60,9 +62,9 @@ func PoolInfo(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("======================================================================================")
 	data := struct {
 		DomainCount string
-		DomainList []string
-		ClientSub string
-	} {
+		DomainList  []string
+		ClientSub   string
+	}{
 		fmt.Sprintf("%v", i),
 		d,
 		fmt.Sprintf("%v", clientSum),
@@ -79,22 +81,24 @@ func ClientRefreshPost(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Empty request", 400)
 		return
 	}
+	var request Request
 
-	var req Req
-
-	err := json.NewDecoder(r.Body).Decode(&req)
+	decoder := json.NewDecoder(r.Body)
+	err := decoder.Decode(&request)
 
 	if err != nil {
 		http.Error(w, "Bad request", 400)
 	}
 
-
-	index, domain := models.FindDomain(req.Host)
+	index, domain := models.FindDomain(request.Host)
 
 	if index != -1 {
 		domain.DomainBroadast(models.NewMessage(map[string]string{
 			"cmd": "refreshPost",
-			"postUrl": req.PostUrl,
+			"postUrl": request.PostUrl,
+			"postId": request.PostId,
+			"host": request.Host,
+			"pageForPosts": request.PageForPosts,
 		}))
 	}
 }

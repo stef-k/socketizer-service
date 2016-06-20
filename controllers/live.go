@@ -5,8 +5,8 @@ import (
 	"github.com/gorilla/websocket"
 
 	"projects.iccode.net/stef-k/socketizer-service/models"
-	"fmt"
 	"github.com/gorilla/mux"
+	"fmt"
 )
 
 func Live(w http.ResponseWriter, r *http.Request) {
@@ -29,7 +29,7 @@ func Live(w http.ResponseWriter, r *http.Request) {
 	} else if err != nil {
 		panic(err)
 	}
-	fmt.Println("got new client from " + host + " with IP: ", r.RemoteAddr)
+	//fmt.Println("got new client from " + host + " with IP: ", r.RemoteAddr)
 	client := models.NewClient(ws, host)
 
 	index, domain := models.FindDomain(host)
@@ -40,7 +40,7 @@ func Live(w http.ResponseWriter, r *http.Request) {
 	} else {
 		domain.AddClient(client)
 	}
-	PoolInfo(w, r)
+	//PoolInfo(w, r)
 	msg := models.NewMessage(map[string]string{
 		"id" : fmt.Sprintf("%p", client.Connection),
 		"message": "socketizer connected",

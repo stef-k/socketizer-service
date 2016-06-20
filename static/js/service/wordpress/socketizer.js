@@ -1,7 +1,5 @@
 'use strict';
-
 var Socketizer = Socketizer || {};
-
 /**
  * Module: Socketizer.main
  * @description
@@ -10,7 +8,6 @@ var Socketizer = Socketizer || {};
  */
 Socketizer.main = (function ($) {
   // private variables
-  var debug = true;
   var websocketSupported = false;
   var serviceUrl = 'localhost:8080';
   var connectTo = 'ws://' + serviceUrl + '/service/live/' + socketizer.host;
@@ -21,12 +18,6 @@ Socketizer.main = (function ($) {
   // public variables
   var pub = {};
   pub.connected = false;
-
-  self.debug = function (msg) {
-    if (debug) {
-      console.debug(msg);
-    }
-  };
 
   pub.init = function () {
     self.check();
@@ -67,7 +58,6 @@ Socketizer.main = (function ($) {
    * Handle close event
    */
   self.close = function () {
-    self.debug('connection closed, will try to reconnect');
     var time = self.generateInterval(self.attempts);
     setTimeout(function () {
       // increase the attempts by 1
@@ -102,31 +92,28 @@ Socketizer.main = (function ($) {
     var currentPage = window.location.href;
     var postUrl;
 
-    self.debug(msg);
     if (msg.hasOwnProperty('Data')) {
-      if (msg.Data.hasOwnProperty('message')) {
-        console.log('got message: ', msg.Data.message);
-      } else if (msg.Data.hasOwnProperty('cmd')) {
+      if (msg.Data.hasOwnProperty('cmd')) {
         if (msg.Data.cmd === 'refreshPost') {
-          if (msg.Data.hasOwnProperty('postUrl')) {
-            postUrl = msg.Data.postUrl;
-            // check if we are in current post page
-            if (postUrl === currentPage) {
-              console.log('refreshing post: ', postUrl);
-              $('#main').load(postUrl + ' #main > *');
-              return false;
-            } else if ( currentPage === postsPage ) {
-              // we are in central blog page, show we refresh all posts
-              console.log('fetching all posts');
-              $('#main').load(socketizer.postsPage + ' #main > *');
-              return false;
-            }
+          postUrl = msg.Data.postUrl;
+          var pageForPosts = msg.Data.pageForPosts;
+          var postsPageIsHomePage = pageForPosts.replace(/^https?:\/\//, '') === msg.Data.host;
+          var selector = '#post-' + msg.Data.postId;
+          var postExists = $(selector).length === 1;
+          if (postUrl === currentPage && postExists) {
+            $('#main').load(postUrl + ' #main > *');
+            return false;
+          } else if (currentPage === postsPage && postExists) {
+            $('#main').load(socketizer.postsPage + ' #main > *');
+            return false;
+          } else if (postsPageIsHomePage && postExists) {
+            $('#main').load(pageForPosts + ' #main > *');
+            return false;
           }
         }
       }
     }
   };
-
   return pub;
 })(jQuery);
 document.addEventListener('DOMContentLoaded', Socketizer.main.init);

@@ -46,7 +46,7 @@ func NewClient(ws *websocket.Conn, domain string) *Client {
 	go func() {
 		// on exit remove Client and close connection
 		defer func() {
-			fmt.Println("Writer exiting")
+			//fmt.Println("Writer exiting")
 			client.Connection.Close()
 			RemoveClient(client)
 		}()
@@ -54,7 +54,7 @@ func NewClient(ws *websocket.Conn, domain string) *Client {
 			// Connection check
 			_, _, err := client.Connection.ReadMessage()
 			if err != nil {
-				fmt.Println("Socket error ", err)
+				//fmt.Println("Socket error, will send a close controll message ", err)
 				break
 			}
 		}

@@ -20,8 +20,17 @@ Socketizer.main = (function ($) {
   pub.connected = false;
 
   pub.init = function () {
+    self.healthyClose();
     self.check();
     self.connect();
+  };
+
+  self.healthyClose = function () {
+    window.onbeforeunload = function () {
+      if (pub.connected) {
+        self.socket.close(1000);
+      }
+    }
   };
 
   /**
@@ -100,15 +109,27 @@ Socketizer.main = (function ($) {
           var postsPageIsHomePage = pageForPosts.replace(/^https?:\/\//, '') === msg.Data.host;
           var selector = '#post-' + msg.Data.postId;
           var postExists = $(selector).length === 1;
-          if (postUrl === currentPage && postExists) {
-            $('#main').load(postUrl + ' #main > *');
-            return false;
-          } else if (currentPage === postsPage && postExists) {
-            $('#main').load(socketizer.postsPage + ' #main > *');
-            return false;
-          } else if (postsPageIsHomePage && postExists) {
-            $('#main').load(pageForPosts + ' #main > *');
-            return false;
+          var isComment = false;
+          if (msg.Data.commentUrl !== '') {
+            isComment = true;
+          }
+          if (isComment) {
+            currentPage = currentPage.split('#comment-')[0];
+            if (postUrl === currentPage && postExists) {
+              $('#main').load(postUrl + ' #main > *');
+              return false;
+            }
+          } else {
+            if (postUrl === currentPage && postExists) {
+              $('#main').load(postUrl + ' #main > *');
+              return false;
+            } else if (currentPage === postsPage && postExists) {
+              $('#main').load(socketizer.postsPage + ' #main > *');
+              return false;
+            } else if (postsPageIsHomePage && postExists) {
+              $('#main').load(pageForPosts + ' #main > *');
+              return false;
+            }
           }
         }
       }

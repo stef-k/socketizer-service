@@ -13,7 +13,9 @@ type Request struct {
 	SecretKey    string `json:"secretKey"`
 	PostUrl      string `json:"postUrl"`
 	PostId       string `json:"postId"`
-	PageForPosts string `json:"pageForPosts`
+	PageForPosts string `json:"pageForPosts"`
+	CommentUrl   string `json:"commentUrl"`
+	CommentId    string `json:"commentId"`
 }
 
 // BroadcastPool broadcasts a message to the DomainPool
@@ -88,6 +90,8 @@ func ClientRefreshPost(w http.ResponseWriter, r *http.Request) {
 			"postId": request.PostId,
 			"host": request.Host,
 			"pageForPosts": request.PageForPosts,
+			"commentUrl" : request.CommentUrl,
+			"commentId": request.CommentId,
 		}))
 	}
 }

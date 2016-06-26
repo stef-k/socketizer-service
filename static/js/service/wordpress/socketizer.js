@@ -89,6 +89,14 @@ Socketizer.main = (function ($) {
     return Math.random() * maxInterval;
   };
 
+  // Used when a client needs an update when a new post or comment is published
+  // this will avoid clients making requrests at the same time
+  self.smallInterval = function () {
+    var interval = Math.random(1, 1500);
+    console.log('interval at: ', interval);
+    return interval
+  };
+
   /**
    * Handle incoming messages
    */
@@ -116,18 +124,26 @@ Socketizer.main = (function ($) {
           if (isComment) {
             currentPage = currentPage.split('#comment-')[0];
             if (postUrl === currentPage && postExists) {
-              $('#main').load(postUrl + ' #main > *');
+              setTimeout(function () {
+                $('#main').load(postUrl + ' #main > *');
+              }, self.smallInterval());
               return false;
             }
           } else {
             if (postUrl === currentPage && postExists) {
-              $('#main').load(postUrl + ' #main > *');
+              setTimeout(function () {
+                $('#main').load(postUrl + ' #main > *');
+              }, self.smallInterval());
               return false;
             } else if (currentPage === postsPage && postExists) {
-              $('#main').load(socketizer.postsPage + ' #main > *');
+              setTimeout(function () {
+                $('#main').load(socketizer.postsPage + ' #main > *');
+              }, self.smallInterval());
               return false;
             } else if (postsPageIsHomePage && postExists) {
-              $('#main').load(pageForPosts + ' #main > *');
+              setTimeout(function () {
+                $('#main').load(pageForPosts + ' #main > *');
+              }, self.smallInterval());
               return false;
             }
           }

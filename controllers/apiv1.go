@@ -46,20 +46,9 @@ func BroadcastDomain(w http.ResponseWriter, r *http.Request) {
 func PoolInfo(w http.ResponseWriter, r *http.Request) {
 	clientSum := 0
 	i, d := models.ListDomains()
-	fmt.Println("======================================================================================")
-	fmt.Println("Domain Count: ", models.DomainCount())
-	fmt.Println("Registered Domains: ", i, " ", d)
 	for _, domain := range models.DomainPool {
-		fmt.Println("---------------------------------------------------------------------------")
-		fmt.Println("  Report for domain: ", domain.Name)
-		fmt.Println("  Connected clients: ", domain.ClientCount())
-		for _, client := range domain.ClientPool {
-			clientSum += 1
-			fmt.Println("---------------------------------------------------------------------------")
-			fmt.Println("    * Client: ", client.Id)
-		}
+		clientSum += len(domain.ClientPool)
 	}
-	fmt.Println("======================================================================================")
 	data := struct {
 		DomainCount string
 		DomainList  []string

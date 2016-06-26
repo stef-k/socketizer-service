@@ -9,8 +9,8 @@ var Socketizer = Socketizer || {};
 Socketizer.main = (function ($) {
   // private variables
   var websocketSupported = false;
-  var serviceUrl = 'localhost:8080';
-  var connectTo = 'ws://' + serviceUrl + '/service/live/' + socketizer.host;
+  var serviceUrl = '192.168.1.3:8080';
+  var connectTo = 'ws://' + serviceUrl + '/service/wordpress/live/' + socketizer.host;
 
   // this
   var self = {};

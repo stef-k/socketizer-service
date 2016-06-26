@@ -38,57 +38,30 @@ func NewClient(ws *websocket.Conn, domain string) *Client {
 	client.Domain = domain
 	client.Connection = ws
 	client.Connection.SetReadLimit(maxMessageSize)
-	client.Connection.SetReadDeadline(time.Now().Add(pongWait))
-
-	removeCLient := make(chan bool)
-	// Ping handler, set periodic pings to check if client is still connected
-	ticker := time.NewTicker(pongWait)
-	go func() {
-		for range ticker.C {
-			select {
-			case <-removeCLient:
-				ticker.Stop()
-				return
-			default:
-				//fmt.Println(time.Now(), " pinging client: ", client.Id)
-				err := client.Connection.WriteControl(websocket.PingMessage, []byte{}, time.Now().Add(writeWait))
-				if err != nil {
-					//fmt.Println(time.Now(), " client disconect, will remove from domain pool ",  client.Id)
-					RemoveClient(client)
-					ticker.Stop()
-					fmt.Println("Exiting routine")
-					removeCLient <- true
-					return
-				}
-			}
-		}
-	}()
+	// Pong check
 	client.Connection.SetPongHandler(func(string) error {
 		client.Connection.SetReadDeadline(time.Now().Add(pongWait)); return nil
 	})
-	//go func() {
-	//	for {
-	//		select {
-	//		case <-removeCLient:
-	//			ticker.Stop()
-	//			return
-	//		default:
-	//			fmt.Println("reading from client ", client.Id)
-	//			if _, _, err := client.Connection.NextReader(); err != nil {
-	//				if err != nil {
-	//					fmt.Println("%v client disconect, setting it inactive ", time.Now(), client.Id)
-	//					RemoveClient(client)
-	//					ticker.Stop()
-	//					fmt.Println("Exiting routine")
-	//					removeCLient <- true
-	//				}
-	//			}
-	//		}
-	//	}
-	//}()
+
+	go func() {
+		// on exit remove Client and close connection
+		defer func() {
+			fmt.Println("Writer exiting")
+			client.Connection.Close()
+			RemoveClient(client)
+		}()
+		for {
+			// Connection check
+			_, _, err := client.Connection.ReadMessage()
+			if err != nil {
+				fmt.Println("Socket error ", err)
+				break
+			}
+		}
+	}()
 	return client
 }
 
-func (c Client)  SendMessage(msg Message) {
+func (c Client) SendMessage(msg Message) {
 	c.Connection.WriteJSON(msg)
 }

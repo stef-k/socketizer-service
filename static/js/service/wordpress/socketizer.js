@@ -93,7 +93,6 @@ Socketizer.main = (function ($) {
   // this will avoid clients making requrests at the same time
   self.smallInterval = function () {
     var interval = Math.random(1, 1500);
-    console.log('interval at: ', interval);
     return interval
   };
 
@@ -118,29 +117,32 @@ Socketizer.main = (function ($) {
           var selector = '#post-' + msg.Data.postId;
           var postExists = $(selector).length === 1;
           var isComment = false;
+          currentPage = currentPage.split('#comment-')[0];
           if (msg.Data.commentUrl !== '') {
             isComment = true;
           }
+          // if there is a new comment
           if (isComment) {
-            currentPage = currentPage.split('#comment-')[0];
+            // if we are in single post page
             if (postUrl === currentPage && postExists) {
               setTimeout(function () {
                 $('#main').load(postUrl + ' #main > *');
               }, self.smallInterval());
               return false;
             }
-          } else {
+          } else { // if there is a new post
+            // if in single post page
             if (postUrl === currentPage && postExists) {
               setTimeout(function () {
                 $('#main').load(postUrl + ' #main > *');
               }, self.smallInterval());
               return false;
-            } else if (currentPage === postsPage && postExists) {
+            } else if (currentPage === postsPage && postExists) { // if in all posts page (recent posts)
               setTimeout(function () {
                 $('#main').load(socketizer.postsPage + ' #main > *');
               }, self.smallInterval());
               return false;
-            } else if (postsPageIsHomePage && postExists) {
+            } else if (postsPageIsHomePage && postExists) { // if landing page is posts page
               setTimeout(function () {
                 $('#main').load(pageForPosts + ' #main > *');
               }, self.smallInterval());

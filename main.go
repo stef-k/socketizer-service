@@ -19,6 +19,5 @@ func main() {
 		http.FileServer(http.Dir("static/js/service/"))))
 	http.Handle("/", router)
 	log.Fatal(http.ListenAndServe(":8080", router))
-
 }
 

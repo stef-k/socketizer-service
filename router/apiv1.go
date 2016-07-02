@@ -28,8 +28,6 @@ var apiv1 = Routes{
 	},
 	// WordPress API
 	// refresh client specific post for a given post url
-	// {postUrl} the permalink of the post
-	// {host} to be renamed to key - the unique ID of the subscriber
 	Route {
 		"refresh-post",
 		"POST",

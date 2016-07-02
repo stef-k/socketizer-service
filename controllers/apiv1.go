@@ -6,11 +6,12 @@ import (
 	"projects.iccode.net/stef-k/socketizer-service/models"
 	"fmt"
 	"encoding/json"
+	"projects.iccode.net/stef-k/socketizer-service/site"
 )
 
 type Request struct {
 	Host         string `json:"host"`
-	SecretKey    string `json:"secretKey"`
+	ApiKey    string `json:"apiKey"`
 	PostUrl      string `json:"postUrl"`
 	PostId       string `json:"postId"`
 	PageForPosts string `json:"pageForPosts"`
@@ -81,17 +82,24 @@ func ClientRefreshPost(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Bad request", 400)
 	}
 
-	index, domain := models.FindDomain(request.Host)
+	// find client in database - check API key, days left or if is free key
+	clientDomain := site.FindDomainByApiKey(request.ApiKey)
+	if clientDomain.IsActive() {
+		index, domain := models.FindDomain(request.Host)
 
-	if index != -1 {
-		domain.DomainBroadast(models.NewMessage(map[string]string{
-			"cmd": "refreshPost",
-			"postUrl": request.PostUrl,
-			"postId": request.PostId,
-			"host": request.Host,
-			"pageForPosts": request.PageForPosts,
-			"commentUrl" : request.CommentUrl,
-			"commentId": request.CommentId,
-		}))
+		if index != -1 {
+			domain.DomainBroadast(models.NewMessage(map[string]string{
+				"cmd": "refreshPost",
+				"postUrl": request.PostUrl,
+				"postId": request.PostId,
+				"host": request.Host,
+				"pageForPosts": request.PageForPosts,
+				"commentUrl" : request.CommentUrl,
+				"commentId": request.CommentId,
+			}))
+		}
+	} else {
+		fmt.Println("Client not found/not active/not with subscription")
 	}
+
 }

@@ -19,6 +19,10 @@ type Request struct {
 	CommentId    string `json:"commentId"`
 }
 
+type ServiceMessage struct {
+	ServiceKey  string `json:"serviceKey"`
+}
+
 // BroadcastPool broadcasts a message to the DomainPool
 func BroadcastPool(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
@@ -47,23 +51,41 @@ func BroadcastDomain(w http.ResponseWriter, r *http.Request) {
 
 // PoolInfo get information about the Pool
 func PoolInfo(w http.ResponseWriter, r *http.Request) {
-	clientSum := 0
-	i, d := models.ListDomains()
-	for _, domain := range models.DomainPool {
-		clientSum += len(domain.ClientPool)
+	if r.Body == nil {
+		http.Error(w, "Empty request", 400)
+		return
 	}
-	data := struct {
-		DomainCount string
-		DomainList  []string
-		ClientSub   string
-	}{
-		fmt.Sprintf("%v", i),
-		d,
-		fmt.Sprintf("%v", clientSum),
+	var service ServiceMessage
+	decoder := json.NewDecoder(r.Body)
+	err := decoder.Decode(&service)
+
+	if err != nil {
+		http.Error(w, "Bad request", 400)
 	}
-	js, _ := json.Marshal(data)
-	w.Header().Set("Content-Type", "application/json")
-	w.Write(js)
+
+	settings := site.GetSettings()
+
+	if settings.ServiceKey == service.ServiceKey {
+		clientSum := 0
+		i, d := models.ListDomains()
+		for _, domain := range models.DomainPool {
+			clientSum += len(domain.ClientPool)
+		}
+		data := struct {
+			DomainCount string
+			DomainList  []string
+			ClientSub   string
+		}{
+			fmt.Sprintf("%v", i),
+			d,
+			fmt.Sprintf("%v", clientSum),
+		}
+		js, _ := json.Marshal(data)
+		w.Header().Set("Content-Type", "application/json")
+		w.Write(js)
+	} else {
+		http.Error(w, "Forbidden", 403)
+	}
 }
 
 // Refresh all clients for a domain for a specified post

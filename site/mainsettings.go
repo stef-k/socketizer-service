@@ -1,16 +1,17 @@
 package site
 
-type MainSettings struct {
+type MainsiteSettings struct {
+	ServiceKey               string
 	FreeKeys                 bool
 	InBeta                   bool
 	MaxConcurrentConnections int
 }
 
-func GetSettings() *MainSettings {
+func GetSettings() *MainsiteSettings {
 
 	db := InitDB()
 	defer db.Close()
-	var settings MainSettings
+	var settings MainsiteSettings
 
 	db.First(&settings)
 

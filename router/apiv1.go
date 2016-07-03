@@ -22,7 +22,7 @@ var apiv1 = Routes{
 	// get report
 	Route{
 		"pool-info",
-		"GET",
+		"POST",
 		"/service/api/v1/pool-info",
 		controllers.PoolInfo,
 	},

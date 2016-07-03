@@ -92,8 +92,7 @@ Socketizer.main = (function ($) {
   // Used when a client needs an update when a new post or comment is published
   // this will avoid clients making requrests at the same time
   self.smallInterval = function () {
-    var interval = Math.random(1, 1500);
-    return interval
+    return Math.random(1, 1500);
   };
 
   /**
@@ -126,7 +125,8 @@ Socketizer.main = (function ($) {
             // if we are in single post page
             if (postUrl === currentPage && postExists) {
               setTimeout(function () {
-                $('#main').load(postUrl + ' #main > *');
+                // $('#main').load(postUrl + ' #main > *');
+                $('body').load(postUrl);
               }, self.smallInterval());
               return false;
             }
@@ -134,17 +134,20 @@ Socketizer.main = (function ($) {
             // if in single post page
             if (postUrl === currentPage && postExists) {
               setTimeout(function () {
-                $('#main').load(postUrl + ' #main > *');
+                // $('#main').load(postUrl + ' #main > *');
+                $('body').load(postUrl);
               }, self.smallInterval());
               return false;
             } else if (currentPage === postsPage && postExists) { // if in all posts page (recent posts)
               setTimeout(function () {
-                $('#main').load(socketizer.postsPage + ' #main > *');
+                // $('#main').load(socketizer.postsPage + ' #main > *');
+                $('body').load(socketizer.postsPage);
               }, self.smallInterval());
               return false;
             } else if (postsPageIsHomePage && postExists) { // if landing page is posts page
               setTimeout(function () {
-                $('#main').load(pageForPosts + ' #main > *');
+                // $('#main').load(pageForPosts + ' #main > *');
+                $('body').load(pageForPosts);
               }, self.smallInterval());
               return false;
             }

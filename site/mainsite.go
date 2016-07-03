@@ -3,7 +3,6 @@ package site
 type MainsiteDomain struct {
 	Domain                   string
 	ApiKey                   string
-	FreeKey                  bool
 	DaysLeft                 int
 	MaxConcurrentConnections int
 	CurrentMonthApiCalls     int
@@ -31,7 +30,7 @@ func FindDomainByName(name string) *MainsiteDomain {
 
 // Check if the domain one way or another is active
 func (d MainsiteDomain) IsActive() bool {
-	return d.FreeKey || d.DaysLeft > 0
+	return d.DaysLeft > 0
 }
 
 func (d MainsiteDomain) GetMaxConcurrentConnections() int {

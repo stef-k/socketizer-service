@@ -11,7 +11,7 @@ import (
 
 type Request struct {
 	Host         string `json:"host"`
-	ApiKey    string `json:"apiKey"`
+	ApiKey       string `json:"apiKey"`
 	PostUrl      string `json:"postUrl"`
 	PostId       string `json:"postId"`
 	PageForPosts string `json:"pageForPosts"`
@@ -84,7 +84,8 @@ func ClientRefreshPost(w http.ResponseWriter, r *http.Request) {
 
 	// find client in database - check API key, days left or if is free key
 	clientDomain := site.FindDomainByApiKey(request.ApiKey)
-	if clientDomain.IsActive() {
+	settings := site.GetSettings()
+	if clientDomain.IsActive() || settings.FreeKeys {
 		index, domain := models.FindDomain(request.Host)
 
 		if index != -1 {

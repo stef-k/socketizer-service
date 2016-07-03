@@ -19,7 +19,9 @@ func Live(w http.ResponseWriter, r *http.Request) {
 		ReadBufferSize:     1024,
 		WriteBufferSize:    1024,
 		// Do not check for origin we accept them all
-		CheckOrigin: func(r *http.Request) bool { return true },
+		CheckOrigin: func(r *http.Request) bool {
+			return true
+		},
 	}
 
 	ws, err := upgrader.Upgrade(w, r, nil)
@@ -33,13 +35,20 @@ func Live(w http.ResponseWriter, r *http.Request) {
 	//fmt.Println("got new client from " + host + " with IP: ", r.RemoteAddr)
 	// Check if domain is active and has empty slots
 	clientDomain := site.FindDomainByName(host)
-	fmt.Println(clientDomain)
-	if clientDomain.IsActive() {
+	settings := site.GetSettings()
+	if clientDomain.IsActive() || settings.FreeKeys {
 		// if is in domain pool check current connections
 		index, domain := models.FindDomain(host)
+		// max connections
+		connections := 0
+		if settings.FreeKeys {
+			connections = settings.MaxConcurrentConnections
+		} else {
+			connections = clientDomain.MaxConcurrentConnections
+		}
 		// check if domain's current connections exceeded max concurrent connections
-		if domain.ClientCount() < clientDomain.MaxConcurrentConnections {
-			fmt.Println("connecting client")
+		if domain.ClientCount() < connections {
+
 			client := models.NewClient(ws, host)
 			if index == -1 {
 				domain := models.NewDomain(host)
@@ -48,7 +57,7 @@ func Live(w http.ResponseWriter, r *http.Request) {
 			} else {
 				domain.AddClient(client)
 			}
-			//PoolInfo(w, r)
+
 			msg := models.NewMessage(map[string]string{
 				"id" : fmt.Sprintf("%p", client.Connection),
 				"message": "socketizer connected",

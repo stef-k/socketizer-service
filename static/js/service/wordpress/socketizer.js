@@ -115,38 +115,41 @@ Socketizer.main = (function ($) {
           var postsPageIsHomePage = pageForPosts.replace(/^https?:\/\//, '') === msg.Data.host;
           var selector = '#post-' + msg.Data.postId;
           var postExists = $(selector).length === 1;
-          var isComment = false;
           currentPage = currentPage.split('#comment-')[0];
-          if (msg.Data.commentUrl !== '') {
-            isComment = true;
-          }
+
           // if there is a new comment
-          if (isComment) {
+          if (msg.Data.what === 'comment') {
             // if we are in single post page
             if (postUrl === currentPage && postExists) {
               setTimeout(function () {
-                // $('#main').load(postUrl + ' #main > *');
                 $('body').load(postUrl);
               }, self.smallInterval());
               return false;
             }
-          } else { // if there is a new post
+          } else if (msg.Data.what === 'product') { // if there is a new woocommerce product sale
+            selector = '#product-' + msg.Data.postId;
+            postExists = $(selector).length === 1;
+            // if we are in single post page
+            if (postUrl === currentPage && postExists) {
+              setTimeout(function () {
+                $('body').load(postUrl);
+              }, self.smallInterval());
+              return false;
+            }
+          } else if (msg.Data.what === 'post') { // if there is a new post
             // if in single post page
             if (postUrl === currentPage && postExists) {
               setTimeout(function () {
-                // $('#main').load(postUrl + ' #main > *');
                 $('body').load(postUrl);
               }, self.smallInterval());
               return false;
             } else if (currentPage === postsPage && postExists) { // if in all posts page (recent posts)
               setTimeout(function () {
-                // $('#main').load(socketizer.postsPage + ' #main > *');
                 $('body').load(socketizer.postsPage);
               }, self.smallInterval());
               return false;
             } else if (postsPageIsHomePage && postExists) { // if landing page is posts page
               setTimeout(function () {
-                // $('#main').load(pageForPosts + ' #main > *');
                 $('body').load(pageForPosts);
               }, self.smallInterval());
               return false;

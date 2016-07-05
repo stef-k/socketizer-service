@@ -15,12 +15,13 @@ type Request struct {
 	PostUrl      string `json:"postUrl"`
 	PostId       string `json:"postId"`
 	PageForPosts string `json:"pageForPosts"`
+	What         string `json:"what"`
 	CommentUrl   string `json:"commentUrl"`
 	CommentId    string `json:"commentId"`
 }
 
 type ServiceMessage struct {
-	ServiceKey  string `json:"serviceKey"`
+	ServiceKey string `json:"serviceKey"`
 }
 
 // BroadcastPool broadcasts a message to the DomainPool
@@ -117,6 +118,7 @@ func ClientRefreshPost(w http.ResponseWriter, r *http.Request) {
 				"postId": request.PostId,
 				"host": request.Host,
 				"pageForPosts": request.PageForPosts,
+				"what": request.What,
 				"commentUrl" : request.CommentUrl,
 				"commentId": request.CommentId,
 			}))

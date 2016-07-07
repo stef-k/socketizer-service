@@ -136,6 +136,28 @@ Socketizer.main = (function ($) {
               }, self.smallInterval());
               return false;
             }
+          } else if (msg.Data.what === 'bb_reply') { // new reply
+            if (postUrl === currentPage) {
+              setTimeout(function () {
+                $('body').load(postUrl);
+              }, self.smallInterval());
+              return false;
+            }
+          } else if (msg.Data.what === 'bb_topic') { // new forum
+            if (postUrl === currentPage) {
+              setTimeout(function () {
+                $('body').load(postUrl);
+              }, self.smallInterval());
+              return false;
+            }
+          } else if (msg.Data.what === 'bb_forum') {
+            console.log(msg.Data.what);
+            if (postUrl === currentPage) {
+              setTimeout(function () {
+                $('body').load(postUrl);
+              }, self.smallInterval());
+              return false;
+            }
           } else if (msg.Data.what === 'post') { // if there is a new post
             // if in single post page
             if (postUrl === currentPage && postExists) {

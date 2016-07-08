@@ -3,6 +3,7 @@
 server_ip="85.159.213.249"
 
 mkdir -p  "/tmp/socketizer-service/static/js/service/wordpress"
+mkdir "/tmp/socketizer-service/logs"
 
 cp "static/js/service/wordpress/socketizer.min.js" "/tmp/socketizer-service/static/js/service/wordpress"
 

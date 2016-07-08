@@ -23,6 +23,6 @@ func main() {
 	router.PathPrefix("/service/static/").Handler(http.StripPrefix("/service/static/",
 		http.FileServer(http.Dir("static/js/service/"))))
 	http.Handle("/", router)
-	log.Fatal(http.ListenAndServe(":8080", router))
+	log.Fatal(http.ListenAndServe("127.0.0.1:8080", router))
 }
 

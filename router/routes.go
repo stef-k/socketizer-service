@@ -22,12 +22,4 @@ var routes = Routes{
 		"/service/wordpress/live/{host}",
 		controllers.Live,
 	},
-	// static index
-	Route{
-		"index",
-		"GET",
-		"/service/",
-		controllers.Index,
-	},
-
 }

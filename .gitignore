@@ -70,4 +70,7 @@ crashlytics.properties
 crashlytics-build.properties
 fabric.properties
 
+# logs
+*.log
+
 socketizer-service

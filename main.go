@@ -4,9 +4,14 @@ import (
 	"log"
 	"net/http"
 	"projects.iccode.net/stef-k/socketizer-service/router"
+	"github.com/jbrodriguez/mlog"
 )
 
 func main() {
+	// enable the logger and close it on exit
+	mlog.StartEx(mlog.LevelInfo, "logs/app.log", 5*1024*1024, 30)
+	mlog.DefaultFlags = log.Ldate|log.Ltime|log.Lmicroseconds|log.Lshortfile
+	defer  mlog.Stop()
 	// the router
 	router := router.NewRouter()
 	// static files for test and own html

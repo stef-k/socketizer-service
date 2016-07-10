@@ -23,4 +23,6 @@ Values inside curly braces state some parameter passed to URL
  
   a WordPress post (post, comment, bbRpess, WooCommerce) has been updated
  
- ```/service/api/v1/wordpress/cmd/client/refresh/post/``` 
+ ```
+ /service/api/v1/wordpress/cmd/client/refresh/post/
+ ``` 

@@ -4,6 +4,7 @@ import (
 	"github.com/gorilla/websocket"
 	"time"
 	"fmt"
+	"github.com/jbrodriguez/mlog"
 )
 
 
@@ -32,6 +33,7 @@ const (
 
 // NewClient creates a new Client object
 func NewClient(ws *websocket.Conn, domain string) *Client {
+	mlog.Info(fmt.Sprintf("Spawn new socket client for domain %v", domain))
 	client := new(Client)
 
 	client.Id = fmt.Sprintf("%p", ws)
@@ -46,7 +48,7 @@ func NewClient(ws *websocket.Conn, domain string) *Client {
 	go func() {
 		// on exit remove Client and close connection
 		defer func() {
-			//fmt.Println("Writer exiting")
+			mlog.Info(fmt.Sprintf("Removing socket client for client %v of domain %v", client.Connection, client.Domain))
 			client.Connection.Close()
 			RemoveClient(client)
 		}()
@@ -54,7 +56,7 @@ func NewClient(ws *websocket.Conn, domain string) *Client {
 			// Connection check
 			_, _, err := client.Connection.ReadMessage()
 			if err != nil {
-				//fmt.Println("Socket error, will send a close controll message ", err)
+				mlog.Info(fmt.Sprintf("Socket error sending close control for client %v of domain %v", client.Connection, client.Domain))
 				break
 			}
 		}

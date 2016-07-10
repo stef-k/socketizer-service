@@ -24,7 +24,6 @@ func (d *Domain) AddClient(client *Client) {
 func (d *Domain) DeleteClient(c *Client) {
 	index, _ := d.FindClient(c)
 	if index != -1 {
-		//fmt.Println("DeleteClient: ", c.Id)
 		d.ClientPool = append(d.ClientPool[:index], d.ClientPool[index + 1:]...)
 	}
 }

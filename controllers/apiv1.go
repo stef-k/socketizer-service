@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"encoding/json"
 	"projects.iccode.net/stef-k/socketizer-service/site"
+	"github.com/jbrodriguez/mlog"
 )
 
 type Request struct {
@@ -53,6 +54,7 @@ func BroadcastDomain(w http.ResponseWriter, r *http.Request) {
 // PoolInfo get information about the Pool
 func PoolInfo(w http.ResponseWriter, r *http.Request) {
 	if r.Body == nil {
+		mlog.Warning("HTTP400, Empty request")
 		http.Error(w, "Empty request", 400)
 		return
 	}
@@ -61,6 +63,7 @@ func PoolInfo(w http.ResponseWriter, r *http.Request) {
 	err := decoder.Decode(&service)
 
 	if err != nil {
+		mlog.Warning("HTTP400, Bad request")
 		http.Error(w, "Bad request", 400)
 	}
 
@@ -85,6 +88,7 @@ func PoolInfo(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		w.Write(js)
 	} else {
+		mlog.Warning("HTTP403, Forbidden ")
 		http.Error(w, "Forbidden", 403)
 	}
 }
@@ -93,6 +97,7 @@ func PoolInfo(w http.ResponseWriter, r *http.Request) {
 func ClientRefreshPost(w http.ResponseWriter, r *http.Request) {
 
 	if r.Body == nil {
+		mlog.Warning("HTTP400, Empty request")
 		http.Error(w, "Empty request", 400)
 		return
 	}
@@ -102,6 +107,7 @@ func ClientRefreshPost(w http.ResponseWriter, r *http.Request) {
 	err := decoder.Decode(&request)
 
 	if err != nil {
+		mlog.Warning("HTTP400, Bad request")
 		http.Error(w, "Bad request", 400)
 	}
 
@@ -112,6 +118,7 @@ func ClientRefreshPost(w http.ResponseWriter, r *http.Request) {
 		index, domain := models.FindDomain(request.Host)
 
 		if index != -1 {
+			mlog.Info("Client found/is active/has subscription, broadcasting message to sockets")
 			domain.DomainBroadast(models.NewMessage(map[string]string{
 				"cmd": "refreshPost",
 				"postUrl": request.PostUrl,
@@ -124,7 +131,7 @@ func ClientRefreshPost(w http.ResponseWriter, r *http.Request) {
 			}))
 		}
 	} else {
-		fmt.Println("Client not found/not active/not with subscription")
+		mlog.Info("Client not found/not active/not with subscription")
 	}
 
 }

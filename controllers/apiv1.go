@@ -8,6 +8,7 @@ import (
 	"encoding/json"
 	"projects.iccode.net/stef-k/socketizer-service/site"
 	"github.com/jbrodriguez/mlog"
+	"errors"
 )
 
 type Request struct {
@@ -55,7 +56,7 @@ func BroadcastDomain(w http.ResponseWriter, r *http.Request) {
 func PoolInfo(w http.ResponseWriter, r *http.Request) {
 	if r.Body == nil {
 		mlog.Warning("HTTP400, Empty request")
-		http.Error(w, "Empty request", 400)
+		panic(errors.New("HTTP400, Empty request"))
 		return
 	}
 	var service ServiceMessage
@@ -64,33 +65,39 @@ func PoolInfo(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		mlog.Warning("HTTP400, Bad request")
-		http.Error(w, "Bad request", 400)
+		panic(errors.New("HTTP400, Bad request, please provide the Service Key"))
 	}
 
-	settings := site.GetSettings()
-
-	if settings.ServiceKey == service.ServiceKey {
-		clientSum := 0
-		i, d := models.ListDomains()
-		for _, domain := range models.DomainPool {
-			clientSum += len(domain.ClientPool)
-		}
-		data := struct {
-			DomainCount string
-			DomainList  []string
-			ClientSub   string
-		}{
-			fmt.Sprintf("%v", i),
-			d,
-			fmt.Sprintf("%v", clientSum),
-		}
-		js, _ := json.Marshal(data)
-		w.Header().Set("Content-Type", "application/json")
-		w.Write(js)
+	settings, e := site.GetSettings()
+	if e != nil {
+		mlog.Warning("could not read settings from database, %s", e)
+		panic(errors.New("HTTP500, Could not read settings from database"))
 	} else {
-		mlog.Warning("HTTP403, Forbidden ")
-		http.Error(w, "Forbidden", 403)
+		if settings.ServiceKey == service.ServiceKey {
+			//if true {
+			clientSum := 0
+			i, d := models.ListDomains()
+			for _, domain := range models.DomainPool {
+				clientSum += len(domain.ClientPool)
+			}
+			data := struct {
+				DomainCount string
+				DomainList  []string
+				ClientSub   string
+			}{
+				fmt.Sprintf("%v", i),
+				d,
+				fmt.Sprintf("%v", clientSum),
+			}
+			js, _ := json.Marshal(data)
+			w.Header().Set("Content-Type", "application/json")
+			w.Write(js)
+		} else {
+			mlog.Warning("HTTP403, Forbidden ")
+			panic(errors.New("HTTP403, Forbidden"))
+		}
 	}
+
 }
 
 // Refresh all clients for a domain for a specified post
@@ -112,8 +119,14 @@ func ClientRefreshPost(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// find client in database - check API key, days left or if is free key
-	clientDomain := site.FindDomainByApiKey(request.ApiKey)
-	settings := site.GetSettings()
+	clientDomain, er := site.FindDomainByApiKey(request.ApiKey)
+	if er != nil {
+		mlog.Warning("could not read settings from database, %s", er)
+	}
+	settings, e := site.GetSettings()
+	if e != nil {
+		mlog.Warning("could not read settings from database, %s", e)
+	}
 	if clientDomain.IsActive() || settings.FreeKeys {
 		index, domain := models.FindDomain(request.Host)
 

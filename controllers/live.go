@@ -8,13 +8,13 @@ import (
 	"github.com/gorilla/mux"
 	"fmt"
 	"projects.iccode.net/stef-k/socketizer-service/site"
+	"github.com/jbrodriguez/mlog"
 )
 
 func Live(w http.ResponseWriter, r *http.Request) {
 
 	parameters := mux.Vars(r)
 	host := parameters["host"]
-
 	var upgrader = websocket.Upgrader{
 		ReadBufferSize:     1024,
 		WriteBufferSize:    1024,
@@ -27,15 +27,21 @@ func Live(w http.ResponseWriter, r *http.Request) {
 	ws, err := upgrader.Upgrade(w, r, nil)
 
 	if _, ok := err.(websocket.HandshakeError); ok {
-		http.Error(w, "Not a websocket", 400)
-		return
-	} else if err != nil {
 		panic(err)
+		return
 	}
 	//fmt.Println("got new client from " + host + " with IP: ", r.RemoteAddr)
 	// Check if domain is active and has empty slots
-	clientDomain := site.FindDomainByName(host)
-	settings := site.GetSettings()
+	clientDomain, er := site.FindDomainByName(host)
+	if er != nil {
+		mlog.Info("panicking from live could not read settings ", er)
+		panic(er)
+	}
+	settings, e  := site.GetSettings()
+	if e != nil {
+		mlog.Info("panicking from live could not read settings ", e)
+		panic(e)
+	}
 	if clientDomain.IsActive() || settings.FreeKeys {
 		// if is in domain pool check current connections
 		index, domain := models.FindDomain(host)

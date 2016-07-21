@@ -1,6 +1,12 @@
 package site
 
+import (
+	"github.com/jbrodriguez/mlog"
+	"github.com/astaxie/beego/orm"
+)
+
 type MainsiteDomain struct {
+	Id                       int
 	Domain                   string
 	ApiKey                   string
 	DaysLeft                 int
@@ -9,23 +15,24 @@ type MainsiteDomain struct {
 }
 
 // GetDomain returns the domain identified by it's API key
-func FindDomainByApiKey(apiKey string) *MainsiteDomain {
-	db := InitDB()
-	defer db.Close()
-
+func FindDomainByApiKey(apiKey string) (*MainsiteDomain, error) {
 	var domain MainsiteDomain
-
-	db.First(&domain, "api_key = ?", apiKey)
-	return &domain
+	o := orm.NewOrm()
+	err := o.QueryTable("mainsite_domain").Filter("api_key", apiKey).One(&domain)
+	if err == orm.ErrNoRows {
+		mlog.Info("could not find domain with such API key")
+	}
+	return &domain, err
 }
 
-func FindDomainByName(name string) *MainsiteDomain {
-	db := InitDB()
-	defer db.Close()
-
+func FindDomainByName(name string) (*MainsiteDomain, error) {
 	var domain MainsiteDomain
-	db.Find(&domain, MainsiteDomain{Domain: name})
-	return &domain
+	o := orm.NewOrm()
+	err := o.QueryTable("mainsite_domain").Filter("domain", name).One(&domain)
+	if err == orm.ErrNoRows {
+		mlog.Info("could not find domain with such name")
+	}
+	return &domain, err
 }
 
 // Check if the domain one way or another is active

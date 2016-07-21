@@ -1,19 +1,25 @@
 package site
 
+import (
+	"github.com/jbrodriguez/mlog"
+	"github.com/astaxie/beego/orm"
+)
+
 type MainsiteSettings struct {
+	Id                       int
 	ServiceKey               string
 	FreeKeys                 bool
 	InBeta                   bool
 	MaxConcurrentConnections int
 }
 
-func GetSettings() *MainsiteSettings {
+func GetSettings() (*MainsiteSettings, error) {
 
-	db := InitDB()
-	defer db.Close()
 	var settings MainsiteSettings
-
-	db.First(&settings)
-
-	return &settings
+	o := orm.NewOrm()
+	err := o.QueryTable("mainsite_settings").One(&settings)
+	if err == orm.ErrNoRows {
+		mlog.Info("could not read settings from DB")
+	}
+	return &settings, err
 }

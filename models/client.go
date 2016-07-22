@@ -68,3 +68,13 @@ func NewClient(ws *websocket.Conn, domain string) *Client {
 func (c Client) SendMessage(msg Message) {
 	c.Connection.WriteJSON(msg)
 }
+
+// Return total Domains and total Clients
+func TotalCons() (int, int) {
+	clientSum := 0
+	_, d := models.ListDomains()
+	for _, domain := range models.DomainPool {
+		clientSum += len(domain.ClientPool)
+	}
+	return d, clientSum
+}

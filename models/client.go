@@ -34,7 +34,7 @@ const (
 
 // NewClient creates a new Client object
 func NewClient(ws *websocket.Conn, domain string) *Client {
-	mlog.Info(fmt.Sprintf("Spawn new socket client for domain %v, Domains: %v, Clients: %v", domain, utils.TotalCons()))
+	mlog.Info(fmt.Sprintf("Spawn new socket client for domain %v, Domains: %v, Clients: %v", domain, totalCons()))
 	client := new(Client)
 
 	client.Id = fmt.Sprintf("%p", ws)
@@ -70,7 +70,7 @@ func (c Client) SendMessage(msg Message) {
 }
 
 // Return total Domains and total Clients
-func TotalCons() (int, int) {
+func totalCons() (int, int) {
 	clientSum := 0
 	_, d := models.ListDomains()
 	for _, domain := range models.DomainPool {

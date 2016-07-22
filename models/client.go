@@ -5,6 +5,7 @@ import (
 	"time"
 	"fmt"
 	"github.com/jbrodriguez/mlog"
+	"projects.iccode.net/stef-k/socketizer-service/utils"
 )
 
 
@@ -33,7 +34,7 @@ const (
 
 // NewClient creates a new Client object
 func NewClient(ws *websocket.Conn, domain string) *Client {
-	mlog.Info(fmt.Sprintf("Spawn new socket client for domain %v", domain))
+	mlog.Info(fmt.Sprintf("Spawn new socket client for domain %v, Domains: %v, Clients: %v", domain, utils.TotalCons()))
 	client := new(Client)
 
 	client.Id = fmt.Sprintf("%p", ws)
@@ -56,7 +57,7 @@ func NewClient(ws *websocket.Conn, domain string) *Client {
 			// Connection check
 			_, _, err := client.Connection.ReadMessage()
 			if err != nil {
-				mlog.Info(fmt.Sprintf("Socket error sending close control for domain %v", client.Domain))
+				mlog.Info(fmt.Sprintf("Sock error sending close control for domain %v, err msg: %v", client.Domain, err.Error()))
 				break
 			}
 		}

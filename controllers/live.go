@@ -30,7 +30,7 @@ func Live(w http.ResponseWriter, r *http.Request) {
 		panic(err)
 		return
 	}
-	//fmt.Println("got new client from " + host + " with IP: ", r.RemoteAddr)
+	mlog.Info("got new client from " + host + " with IP: ", r.RemoteAddr)
 	// Check if domain is active and has empty slots
 	clientDomain, er := site.FindDomainByName(host)
 	if er != nil {
@@ -71,11 +71,11 @@ func Live(w http.ResponseWriter, r *http.Request) {
 
 			client.SendMessage(msg)
 		} else {
-			fmt.Println("max client count reached")
+			mlog.Info("max client count reached")
 		}
 	} else {
 		// client not found or is not active
-		fmt.Println("client not found or is not active")
+		mlog.Info("client not found or is not active")
 	}
 }
 

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # deploy to production server
-server_ip="85.159.213.249"
+server_ip="socketizer.com"
 
 mkdir -p  "/tmp/socketizer-service/static/js/service/wordpress"
 mkdir "/tmp/socketizer-service/logs"

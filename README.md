@@ -6,6 +6,32 @@ The Websockets and API server behind Socketizer service.
 
 OS: Ubuntu 16.04 LTS
 
+### Supervisor
+
+This service uses Supervisor for process management
+
+ * Install supervisor
+ * Add a SystemD config file `supervisor.service` as the following
+ 
+```
+[Unit]
+Description=Supervisord Service
+
+[Service]
+Restart=on-failure
+RestartSec=5s
+User=root
+ExecStart=/usr/bin/supervisord -n -c /etc/supervisor/supervisord.conf
+
+[Install]
+WantedBy=multi-user.target
+
+```
+ 
+ * Create a configuration directory `mkdir /etc/supervisor`
+ * Echo the supervisor config to /etc/supervisor directory `echo_supervisord_conf > /etc/supervisor/supervisor.conf`
+ * Change the [include] directive to include configuration files from /etc/supervisor/conf.d such as `files = /etc/supervisor/conf.d/*.conf `
+
 ### Raise OS open file limits
 
 Raise to 100.000 

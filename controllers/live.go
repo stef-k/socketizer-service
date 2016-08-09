@@ -81,7 +81,9 @@ func Live(w http.ResponseWriter, r *http.Request) {
 
 			d, c := models.TotalCons()
 			mlog.Info(fmt.Sprintf("Domains: %v, Clients: %v", d, c))
-
+			// Update stats
+			site.IncreaseTotalClientsBy(1)
+			site.UpdateMaxConcurrentClients(c)
 			msg := models.NewMessage(map[string]string{
 				"id" : fmt.Sprintf("%p", client.Connection),
 				"message": "socketizer connected",

@@ -3,7 +3,6 @@ package controllers
 import (
 	"net/http"
 	"github.com/gorilla/websocket"
-
 	"projects.iccode.net/stef-k/socketizer-service/models"
 	"github.com/gorilla/mux"
 	"fmt"
@@ -30,7 +29,7 @@ func Live(w http.ResponseWriter, r *http.Request) {
 		panic(err)
 		return
 	}
-	mlog.Info("got new client from " + host + " with IP: ", r.RemoteAddr)
+	mlog.Info("got new client from %s with IP: %s", host , r.RemoteAddr)
 	// Check if domain is active and has empty slots
 	clientDomain, er := site.FindDomainByName(host)
 	if er != nil {
@@ -42,10 +41,19 @@ func Live(w http.ResponseWriter, r *http.Request) {
 		mlog.Info("panicking from live could not read settings ", e)
 		panic(e)
 	}
+	// server wide connection limits
+	connectionLimit := site.GetAllClients()
+
+	// do not connect the client if we have reached server's limits
+	if connectionLimit >= settings.MaxConnection {
+		mlog.Info("Server reached its limit, aborting connection")
+		return
+	}
+
 	if clientDomain.IsActive() || settings.FreeKeys {
 		// if is in domain pool check current connections
 		index, domain := models.FindDomain(host)
-		// max connections
+		// max connections how many connections has this domain
 		connections := 0
 		if settings.FreeKeys {
 			connections = settings.MaxConcurrentConnections
@@ -64,6 +72,9 @@ func Live(w http.ResponseWriter, r *http.Request) {
 				domain.AddClient(client)
 			}
 
+			d, c := models.TotalCons()
+			mlog.Info(fmt.Sprintf("Domains: %v, Clients: %v", d, c))
+
 			msg := models.NewMessage(map[string]string{
 				"id" : fmt.Sprintf("%p", client.Connection),
 				"message": "socketizer connected",
@@ -72,6 +83,7 @@ func Live(w http.ResponseWriter, r *http.Request) {
 			client.SendMessage(msg)
 		} else {
 			mlog.Info("max client count reached")
+			return
 		}
 	} else {
 		// client not found or is not active

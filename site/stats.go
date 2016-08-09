@@ -6,40 +6,53 @@ import (
 )
 
 // Stats model to hold some basic application - server stats
-type Stats struct {
-	TotalClients         int64
+type MainsiteStatistics struct {
+	Id                   int
 	MaxConcurrentClients int
-}
-
-func GetStats()  (*Stats, error){
-	var stats Stats
-	o := orm.NewOrm()
-
-	err := o.QueryTable("mainsite_stats").One(&stats)
-	if err == orm.ErrNoRows {
-		mlog.Info("could not read stats from DB")
-	}
-	return &stats, err
+	TotalClients         int64
 }
 
 //IncreaseTotalClientsBy increases the total of all time connected clients
-func IncreaseTotalClientsBy(number int)  {
-	stats, err := GetStats()
+func IncreaseTotalClientsBy(number int) {
+	var stats MainsiteStatistics
+	o := orm.NewOrm()
+
+	err := o.QueryTable("mainsite_statistics").One(&stats)
+	if err != nil {
+		if err == orm.ErrNoRows {
+			mlog.Info("no Stats record found in DB, please create one record")
+		} else {
+			mlog.Info("could not access stats table, ", err.Error())
+		}
+	}
 
 	if err != nil {
-		mlog.Warning("Could not update TotalClients stats")
+		mlog.Warning("could not update TotalClients stats")
 	} else {
 		var client int64
 		client = int64(number)
 		o := orm.NewOrm()
-		stats.TotalClients = client
-		o.Update(&stats, "TotalClients")
+		stats.TotalClients = stats.TotalClients + client
+		_, e := o.Update(&stats, "TotalClients")
+		if e != nil {
+			mlog.Warning("could not update TotalClients")
+		}
 	}
 }
 
 //UpdateMaxConcurrentClients updates the all time high of concurrent clients
-func UpdateMaxConcurrentClients(clientNumber int)  {
-	stats, err := GetStats()
+func UpdateMaxConcurrentClients(clientNumber int) {
+	var stats MainsiteStatistics
+	o := orm.NewOrm()
+
+	err := o.QueryTable("mainsite_statistics").One(&stats)
+	if err != nil {
+		if err == orm.ErrNoRows {
+			mlog.Info("no Stats record found in DB, please create one record")
+		} else {
+			mlog.Info("could not access stats table, ", err.Error())
+		}
+	}
 
 	if err != nil {
 		mlog.Warning("Could not update MaxConcurrentClients stats")
@@ -47,7 +60,10 @@ func UpdateMaxConcurrentClients(clientNumber int)  {
 		if stats.MaxConcurrentClients < clientNumber {
 			o := orm.NewOrm()
 			stats.MaxConcurrentClients = clientNumber
-			o.Update(&stats, "MaxConcurrentClients")
+			_, e :=o.Update(&stats, "MaxConcurrentClients")
+			if e != nil {
+				mlog.Warning("could not update MaxConcurrentClients")
+			}
 		}
 	}
 }

@@ -8,6 +8,7 @@ import (
 
 type MainsiteSettings struct {
 	Id                       int
+	ServiceIsActive          bool
 	ServiceKey               string
 	FreeKeys                 bool
 	InBeta                   bool

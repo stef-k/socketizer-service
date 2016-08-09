@@ -12,6 +12,17 @@ import (
 
 func Live(w http.ResponseWriter, r *http.Request) {
 
+	settings, e  := site.GetSettings()
+	if e != nil {
+		mlog.Info("panicking from live could not read settings ", e)
+		panic(e)
+	}
+
+	if !settings.ServiceIsActive {
+		mlog.Info("Service is inactive, aborting connection")
+		return
+	}
+
 	parameters := mux.Vars(r)
 	host := parameters["host"]
 	var upgrader = websocket.Upgrader{
@@ -36,11 +47,7 @@ func Live(w http.ResponseWriter, r *http.Request) {
 		mlog.Info("panicking from live could not read settings ", er)
 		panic(er)
 	}
-	settings, e  := site.GetSettings()
-	if e != nil {
-		mlog.Info("panicking from live could not read settings ", e)
-		panic(e)
-	}
+
 	// server wide connection limits
 	connectionLimit := site.GetAllClients()
 

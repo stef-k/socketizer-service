@@ -49,7 +49,7 @@ func Live(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// server wide connection limits
-	connectionLimit := site.GetAllClients()
+	connectionLimit := models.GetAllClients()
 
 	// do not connect the client if we have reached server's limits
 	if connectionLimit >= settings.MaxConnection {
@@ -84,6 +84,7 @@ func Live(w http.ResponseWriter, r *http.Request) {
 			// Update stats
 			site.IncreaseTotalClientsBy(1)
 			site.UpdateMaxConcurrentClients(c)
+			site.UpdateMaxConcurrentDomains(d)
 			msg := models.NewMessage(map[string]string{
 				"id" : fmt.Sprintf("%p", client.Connection),
 				"message": "socketizer connected",

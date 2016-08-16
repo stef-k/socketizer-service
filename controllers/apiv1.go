@@ -49,6 +49,7 @@ func BroadcastDomain(w http.ResponseWriter, r *http.Request) {
 		domain.DomainBroadast(models.NewMessage(map[string]string{
 			"message": message,
 		}))
+		site.UpdateTotalMessagesBroadcasted()
 	}
 }
 

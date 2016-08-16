@@ -56,14 +56,24 @@ func ListDomains() (int, []string) {
 	return len(DomainPool), pool
 }
 
-// DomainCount return the number of curretly registered domains in pool
-func DomainCount() int  {
-	return len(DomainPool)
-}
-
 // PoolBroadcast send a message to all clients of the Pool
 func PoolBroadcast(m Message)  {
 	for _, domain := range DomainPool {
 		domain.DomainBroadast(m)
 	}
+}
+
+// GetAllClients returns the number of all connected clients
+func GetAllClients() int {
+
+	clientSum := 0
+	for _, domain := range DomainPool {
+		clientSum += len(domain.ClientPool)
+	}
+	return clientSum
+}
+
+// GetConnectedDomains get the number of all connected domains
+func GetConnectedDomains()  int{
+	return len(DomainPool)
 }

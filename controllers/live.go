@@ -13,6 +13,8 @@ import (
 func Live(w http.ResponseWriter, r *http.Request) {
 
 	settings, e  := site.GetSettings()
+	// domain found on database
+	domainExists := false
 	if e != nil {
 		mlog.Info("panicking from live could not read settings ", e)
 		panic(e)
@@ -43,9 +45,8 @@ func Live(w http.ResponseWriter, r *http.Request) {
 	mlog.Info("got new client from %s with IP: %s", host , r.RemoteAddr)
 	// Check if domain is active and has empty slots
 	clientDomain, er := site.FindDomainByName(host)
-	if er != nil {
-		mlog.Info("panicking from live could not read settings ", er)
-		panic(er)
+	if er == nil {
+		domainExists = true
 	}
 
 	// server wide connection limits
@@ -68,7 +69,8 @@ func Live(w http.ResponseWriter, r *http.Request) {
 			connections = clientDomain.MaxConcurrentConnections
 		}
 		// check if domain's current connections exceeded max concurrent connections
-		if domain.ClientCount() < connections {
+		// and domain exists in database
+		if domain.ClientCount() < connections && domainExists {
 
 			client := models.NewClient(ws, host)
 			if index == -1 {

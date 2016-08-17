@@ -49,7 +49,6 @@ func BroadcastDomain(w http.ResponseWriter, r *http.Request) {
 		domain.DomainBroadast(models.NewMessage(map[string]string{
 			"message": message,
 		}))
-		site.UpdateTotalMessagesBroadcasted()
 	}
 }
 
@@ -143,6 +142,7 @@ func ClientRefreshPost(w http.ResponseWriter, r *http.Request) {
 				"commentUrl" : request.CommentUrl,
 				"commentId": request.CommentId,
 			}))
+			site.UpdateTotalMessagesBroadcasted()
 		}
 	} else {
 		mlog.Info("Client not found/not active/not with subscription")

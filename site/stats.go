@@ -60,7 +60,7 @@ func UpdateTotalMessagesBroadcasted()  {
 	if err != nil {
 		mlog.Warning("Could not update TotalMessagesBroadcasted stats")
 	} else {
-		stats.TotalMessagesBroadcasted += 1
+		stats.TotalMessagesBroadcasted = stats.TotalMessagesBroadcasted + 1
 		_, e := o.Update(&stats, "TotalMessagesBroadcasted")
 		if e != nil {
 			mlog.Warning("could not update TotalMessagesBroadcasted")

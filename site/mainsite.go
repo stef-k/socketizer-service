@@ -21,8 +21,10 @@ func FindDomainByApiKey(apiKey string) (*MainsiteDomain, error) {
 	err := o.QueryTable("mainsite_domain").Filter("api_key", apiKey).One(&domain)
 	if err == orm.ErrNoRows {
 		mlog.Info("could not find domain with such API key")
+		return &domain, nil
+	} else {
+		return &domain, err
 	}
-	return &domain, err
 }
 
 func FindDomainByName(name string) (*MainsiteDomain, error) {
@@ -31,8 +33,10 @@ func FindDomainByName(name string) (*MainsiteDomain, error) {
 	err := o.QueryTable("mainsite_domain").Filter("domain", name).One(&domain)
 	if err == orm.ErrNoRows {
 		mlog.Info("could not find domain with such name")
+		return &domain, nil
+	} else {
+		return &domain, err
 	}
-	return &domain, err
 }
 
 // Check if the domain one way or another is active

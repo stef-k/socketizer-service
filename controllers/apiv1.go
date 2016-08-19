@@ -131,7 +131,17 @@ func ClientRefreshPost(w http.ResponseWriter, r *http.Request) {
 		index, domain := models.FindDomain(request.Host)
 
 		if index != -1 {
-			mlog.Info("Client found/is active/has subscription, broadcasting message to sockets")
+			mlog.Info("---------------------------------------------------------------------")
+			mlog.Info("Client is active, broadcasting message for sockets on domain: %s", clientDomain.Domain)
+			mlog.Info("postUrl %s", request.PostUrl)
+			mlog.Info("postId %s", request.PostId)
+			mlog.Info("host %s", request.Host)
+			mlog.Info("pageForPosts %s", request.PageForPosts)
+			mlog.Info("pageForPosts %s", request.PageForPosts)
+			mlog.Info("what %s", request.What)
+			mlog.Info("commentUrl %s", request.CommentUrl)
+			mlog.Info("commentId %s", request.CommentId)
+			mlog.Info("---------------------------------------------------------------------")
 			domain.DomainBroadast(models.NewMessage(map[string]string{
 				"cmd": "refreshPost",
 				"postUrl": request.PostUrl,

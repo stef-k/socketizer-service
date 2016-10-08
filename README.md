@@ -8,6 +8,10 @@ The whole project is based uppon 3 sub-projects:
  * Socketizer-Service (this repository) which is the WebSockets server, responsible for pushing live updates to WordPress sites, made with Go
  * [Socketizer-WordPress](https://github.com/stef-k/socketizer-wordpress) which is the WordPress plugin, responsible to call the websocket server API, made with PHP
 
+## Demo
+
+You can check the live site at: https://www.socketizer.com/
+
 ## Configuration of the Server
 
 OS: Ubuntu 16.04 LTS

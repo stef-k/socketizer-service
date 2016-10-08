@@ -2,6 +2,12 @@
 
 The Websockets and API server behind Socketizer service.
 
+The whole project is based uppon 3 sub-projects:
+
+ * [Socketizer](https://github.com/stef-k/socketizer) which is the front-end, that showcases the service, registers new users, made with Python and Django
+ * Socketizer-Service (this repository) which is the WebSockets server, responsible for pushing live updates to WordPress sites, made with Go
+ * [Socketizer-WordPress](https://github.com/stef-k/socketizer-wordpress) which is the WordPress plugin, responsible to call the websocket server API, made with PHP
+
 ## Configuration of the Server
 
 OS: Ubuntu 16.04 LTS

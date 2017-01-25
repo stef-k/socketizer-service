@@ -3,10 +3,10 @@ package controllers
 import (
 	"net/http"
 	"github.com/gorilla/mux"
-	"projects.iccode.net/stef-k/socketizer-service/models"
+	"github.com/stef-k/socketizer-service/models"
 	"fmt"
 	"encoding/json"
-	"projects.iccode.net/stef-k/socketizer-service/site"
+	"github.com/stef-k/socketizer-service/site"
 	"github.com/jbrodriguez/mlog"
 	"errors"
 )

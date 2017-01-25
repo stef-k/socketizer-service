@@ -3,7 +3,7 @@ package main
 import (
 	"log"
 	"net/http"
-	"projects.iccode.net/stef-k/socketizer-service/router"
+	"github.com/stef-k/socketizer-service/router"
 	"github.com/jbrodriguez/mlog"
 	//"projects.iccode.net/stef-k/socketizer-service/site"
 )

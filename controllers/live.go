@@ -3,10 +3,10 @@ package controllers
 import (
 	"net/http"
 	"github.com/gorilla/websocket"
-	"projects.iccode.net/stef-k/socketizer-service/models"
+	"github.com/stef-k/socketizer-service/models"
 	"github.com/gorilla/mux"
 	"fmt"
-	"projects.iccode.net/stef-k/socketizer-service/site"
+	"github.com/stef-k/socketizer-service/site"
 	"github.com/jbrodriguez/mlog"
 )
 

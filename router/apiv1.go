@@ -1,6 +1,6 @@
 package router
 
-import 	"projects.iccode.net/stef-k/socketizer-service/controllers"
+import 	"github.com/stef-k/socketizer-service/controllers"
 
 type Apiv1 []Route
 

@@ -5,7 +5,7 @@ import (
 
 	"github.com/gorilla/mux"
 
-	"projects.iccode.net/stef-k/socketizer-service/utils"
+	"github.com/stef-k/socketizer-service/utils"
 	"github.com/justinas/alice"
 )
 

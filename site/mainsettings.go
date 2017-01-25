@@ -22,6 +22,7 @@ func GetSettings() (*MainsiteSettings, error) {
 	err := o.QueryTable("mainsite_settings").One(&settings)
 	if err == orm.ErrNoRows {
 		mlog.Info("no settings found in DB, please create one record")
+		return nil, err
 	}
 	return &settings, err
 }

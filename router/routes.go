@@ -2,7 +2,7 @@ package router
 
 import (
 	"net/http"
-	"projects.iccode.net/stef-k/socketizer-service/controllers"
+	"github.com/stef-k/socketizer-service/controllers"
 )
 
 type Route struct {

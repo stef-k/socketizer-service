@@ -111,73 +111,78 @@ Socketizer.main = (function ($) {
     if (msg.hasOwnProperty('Data')) {
       if (msg.Data.hasOwnProperty('cmd')) {
         if (msg.Data.cmd === 'refreshPost') {
-          postUrl = msg.Data.postUrl;
-          var pageForPosts = msg.Data.pageForPosts;
-          var postsPageIsHomePage = pageForPosts.replace(/^https?:\/\//, '') === msg.Data.host;
-          var selector = '#post-' + msg.Data.postId;
-          var postExists = $(selector).length === 1;
-          currentPage = currentPage.split('#comment-')[0];
+          setTimeout(function () {
+            $('body').load(window.location.href);
+          }, self.smallInterval()
+          );
 
-          // if there is a new comment
-          if (msg.Data.what === 'comment') {
-            // if we are in single post page
-            if (postUrl === currentPage && postExists) {
-              setTimeout(function () {
-                $('body').load(postUrl);
-              }, self.smallInterval());
-              return false;
-            }
-          } else if (msg.Data.what === 'product') { // if there is a new woocommerce product sale
-            selector = '#product-' + msg.Data.postId;
-            postExists = $(selector).length === 1;
-            // if we are in single post page
-            if (postUrl === currentPage && postExists) {
-              setTimeout(function () {
-                $('body').load(postUrl);
-              }, self.smallInterval());
-              return false;
-            }
-          } else if (msg.Data.what === 'bb_reply') { // new reply
-            if (postUrl === currentPage) {
-              setTimeout(function () {
-                $('body').load(postUrl);
-              }, self.smallInterval());
-              return false;
-            }
-          } else if (msg.Data.what === 'bb_topic') { // new forum
-            if (postUrl === currentPage) {
-              setTimeout(function () {
-                $('body').load(postUrl);
-              }, self.smallInterval());
-              return false;
-            }
-          } else if (msg.Data.what === 'bb_forum') {
-            console.log(msg.Data.what);
-            if (postUrl === currentPage) {
-              setTimeout(function () {
-                $('body').load(postUrl);
-              }, self.smallInterval());
-              return false;
-            }
-          } else if (msg.Data.what === 'post') { // if there is a new post
-            // if in single post page
-            if (postUrl === currentPage && postExists) {
-              setTimeout(function () {
-                $('body').load(postUrl);
-              }, self.smallInterval());
-              return false;
-            } else if (currentPage === postsPage && postExists) { // if in all posts page (recent posts)
-              setTimeout(function () {
-                $('body').load(socketizer.postsPage);
-              }, self.smallInterval());
-              return false;
-            } else if (postsPageIsHomePage && postExists) { // if landing page is posts page
-              setTimeout(function () {
-                $('body').load(pageForPosts);
-              }, self.smallInterval());
-              return false;
-            }
-          }
+          // postUrl = msg.Data.postUrl;
+          // var pageForPosts = msg.Data.pageForPosts;
+          // var postsPageIsHomePage = pageForPosts.replace(/^https?:\/\//, '') === msg.Data.host;
+          // var selector = '#post-' + msg.Data.postId;
+          // var postExists = $(selector).length === 1;
+          // currentPage = currentPage.split('#comment-')[0];
+
+          // // if there is a new comment
+          // if (msg.Data.what === 'comment') {
+          //   // if we are in single post page
+          //   if (postUrl === currentPage && postExists) {
+          //     setTimeout(function () {
+          //       $('body').load(postUrl);
+          //     }, self.smallInterval());
+          //     return false;
+          //   }
+          // } else if (msg.Data.what === 'product') { // if there is a new woocommerce product sale
+          //   selector = '#product-' + msg.Data.postId;
+          //   postExists = $(selector).length === 1;
+          //   // if we are in single post page
+          //   if (postUrl === currentPage && postExists) {
+          //     setTimeout(function () {
+          //       $('body').load(postUrl);
+          //     }, self.smallInterval());
+          //     return false;
+          //   }
+          // } else if (msg.Data.what === 'bb_reply') { // new reply
+          //   if (postUrl === currentPage) {
+          //     setTimeout(function () {
+          //       $('body').load(postUrl);
+          //     }, self.smallInterval());
+          //     return false;
+          //   }
+          // } else if (msg.Data.what === 'bb_topic') { // new forum
+          //   if (postUrl === currentPage) {
+          //     setTimeout(function () {
+          //       $('body').load(postUrl);
+          //     }, self.smallInterval());
+          //     return false;
+          //   }
+          // } else if (msg.Data.what === 'bb_forum') {
+          //   console.log(msg.Data.what);
+          //   if (postUrl === currentPage) {
+          //     setTimeout(function () {
+          //       $('body').load(postUrl);
+          //     }, self.smallInterval());
+          //     return false;
+          //   }
+          // } else if (msg.Data.what === 'post') { // if there is a new post
+          //   // if in single post page
+          //   if (postUrl === currentPage && postExists) {
+          //     setTimeout(function () {
+          //       $('body').load(postUrl);
+          //     }, self.smallInterval());
+          //     return false;
+          //   } else if (currentPage === postsPage && postExists) { // if in all posts page (recent posts)
+          //     setTimeout(function () {
+          //       $('body').load(socketizer.postsPage);
+          //     }, self.smallInterval());
+          //     return false;
+          //   } else if (postsPageIsHomePage && postExists) { // if landing page is posts page
+          //     setTimeout(function () {
+          //       $('body').load(pageForPosts);
+          //     }, self.smallInterval());
+          //     return false;
+          //   }
+          // }
         }
       }
     }
